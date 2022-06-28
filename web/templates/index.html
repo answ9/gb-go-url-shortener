@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>URL Shortener</title>
+    <style>
+        * {
+            padding: 0;
+        }
+        body {
+            background: #e2fbfd;
+            font-family: lato,arial,helvetica neue,sans-serif;
+            font-weight: 400;
+            font-size: 18px;
+            padding-top: 120px;
+        }
+        label {
+            font-weight: 700;
+        }
+        .wrapper {
+            background: #fff;
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+        .align-right {
+            text-align: right;
+        }
+        #generate:hover {
+            background: #eb6f00;
+        }
+        #generate {
+            cursor: pointer;
+            margin-top: 32px;
+            display: block;
+            outline: none;
+            border: none;
+            background: #ff8300;
+            color: #fff;
+            text-transform: uppercase;
+            line-height: 50px;
+            width: 100%;
+            font-size: 16px;
+            font-weight: 700;
+        }
+        input {
+            outline: none;
+            margin: 0;
+            border: none;
+            border-bottom: 2px solid #ccc;
+            box-shadow: none;
+            width: 90%;
+            color: #666;
+            padding: 15px 0;
+            font-size: 18px;
+            font-weight: 700;
+
+        }
+        a {
+            text-decoration: none;
+            color: #999;
+        }
+        h1 {
+            color: #ff8300;
+            font-size: 30px;
+            text-align: center;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        
+    </div>
+    <div class="wrapper">
+        <h1>URL Shortener</h1>
+        <p>Here you can generate short link to&nbsp;redirect on&nbsp;any website. I&nbsp;tried to&nbsp;write clean code app using the best practices. Maybe there are some things to&nbsp;improve. If&nbsp;you found such things, please make pull-request. The source code is&nbsp;available on&nbsp;<a href="https://github.com/stepan2volkov/urlshortener">GitHub</a>.</p>
+        <label for="original-url">URL:</label>
+        <input id="original-url" type="text">
+        <button id="generate">Generate</button>
+
+        <a class="hidden" id="short-url">Short URL</a><br>
+        <a class="hidden" id="stats-url">Stats URL</a>
+    </div>
+    <div class="wrapper align-right">
+        <a href="/openapi">OpenAPI</a>
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        "use strict";
+        let generateBtn = document.getElementById("generate");
+        let originalURL = document.getElementById("original-url");
+        let shortURL = document.getElementById("short-url");
+        let statsURL = document.getElementById("stats-url");
+
+        const sendPostRequest = async (req) => {
+            try {
+                const resp = await axios.post('{{ .Host }}', req);
+                console.log(resp.data);
+
+                shortURL.setAttribute("href", resp.data.shortURL);
+                statsURL.setAttribute("href", resp.data.statsURL);
+                shortURL.textContent = "Short URL";
+                statsURL.textContent = "Stats URL";
+
+                shortURL.classList.remove("hidden");
+                statsURL.classList.remove("hidden");
+            } catch (err) {
+                console.error(err);
+            }
+        };
+
+        generateBtn.onclick = function() {
+            const request = {
+                originalURL: originalURL.value
+            };
+            sendPostRequest(request);
+        };
+    </script>
+</body>
+</html>
